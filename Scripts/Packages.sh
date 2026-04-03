@@ -107,11 +107,11 @@ ADD_THIRD_PARTY_FEEDS() {
         echo "  [添加] small8 feed (jell)"
     fi
     
-    # 添加 PassWall feed
-    if ! grep -q "openwrt-passwall\|passwall" feeds.conf.default; then
-        echo "src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall;main" >> feeds.conf.default
-        echo "  [添加] passwall feed"
-    fi
+    # # 添加 PassWall feed
+    # if ! grep -q "openwrt-passwall\|passwall" feeds.conf.default; then
+    #     echo "src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall;main" >> feeds.conf.default
+    #     echo "  [添加] passwall feed"
+    # fi
     
     # 更新 feeds
     ./scripts/feeds update -a
@@ -186,9 +186,13 @@ INSTALL_FROM_FEEDS() {
         v2dat mosdns luci-app-mosdns adguardhome luci-app-adguardhome ddns-go \
         luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd luci-app-store quickstart \
         luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest netdata luci-app-netdata \
-        lucky luci-app-lucky luci-app-openclash luci-app-homeproxy luci-app-amlogic nikki luci-app-nikki \
+        lucky luci-app-lucky luci-app-openclash luci-app-homeproxy nikki luci-app-nikki \
         oaf open-app-filter luci-app-oaf \
-        msd_lite luci-app-msd_lite cups luci-app-cupsd p910nd luci-app-p910nd
+        msd_lite luci-app-msd_lite cups luci-app-cupsd p910nd luci-app-p910nd \
+        luci-theme-argon luci-app-argon-config luci-theme-aurora \
+        luci-app-passwall luci-app-passwall2 luci-app-smartdns \
+        luci-app-diskman luci-app-easytier luci-app-openlist2 \
+        luci-app-partexp luci-app-qbittorrent luci-app-vnt
     echo "  [完成] 从 small8 安装插件"
 }
 
@@ -257,39 +261,15 @@ main() {
     # Step 3: 从 feeds 安装插件
     INSTALL_FROM_FEEDS
     
-    # Step 4: 安装自定义插件 (直接 clone)
+    # Step 4: 安装 small8 没有的自定义插件
     echo ""
-    echo ">>> 安装自定义插件..."
-    
+    echo ">>> 安装自定义插件 (small8 没有的)..."
     # 主题
-    UPDATE_PACKAGE "argon" "sbwml/luci-theme-argon" "openwrt-25.12"
-    UPDATE_PACKAGE "aurora" "eamonxg/luci-theme-aurora" "master"
+    # UPDATE_PACKAGE "aurora" "eamonxg/luci-theme-aurora" "master"
     UPDATE_PACKAGE "aurora-config" "eamonxg/luci-app-aurora-config" "master"
-    
-    # 代理
-    UPDATE_PACKAGE "homeproxy" "VIKINGYFY/homeproxy" "main"
-    UPDATE_PACKAGE "openclash" "vernesong/OpenClash" "dev" "pkg"
-    UPDATE_PACKAGE "passwall" "Openwrt-Passwall/openwrt-passwall" "main" "pkg"
-    UPDATE_PACKAGE "passwall2" "Openwrt-Passwall/openwrt-passwall2" "main" "pkg"
-    
-    # 网络工具
-    UPDATE_PACKAGE "smartdns" "pymumu/luci-app-smartdns" "master" "pkg"
-    UPDATE_PACKAGE "adguardhome" "AUKipsey/luci-app-adguardhome" "main" "pkg"
-    UPDATE_PACKAGE "pbr" "AsaraKitty/luci-app-pbr" "master"
-    UPDATE_PACKAGE "open-app-filter" "destan19/OpenAppFilter" "master" "" "luci-app-appfilter oaf"
-    UPDATE_PACKAGE "ddns-go" "sirpdboy/luci-app-ddns-go" "main"
-    UPDATE_PACKAGE "diskman" "lisaac/luci-app-diskman" "master"
-    UPDATE_PACKAGE "easytier" "EasyTier/luci-app-easytier" "main"
-    UPDATE_PACKAGE "fancontrol" "rockjake/luci-app-fancontrol" "main"
-    UPDATE_PACKAGE "gecoosac" "laipeng668/luci-app-gecoosac" "main"
-    UPDATE_PACKAGE "mosdns" "sbwml/luci-app-mosdns" "v5" "" "v2dat"
+    # 其他
     UPDATE_PACKAGE "netspeedtest" "sirpdboy/netspeedtest" "main" "" "homebox speedtest"
-    UPDATE_PACKAGE "openlist2" "sbwml/luci-app-openlist2" "main"
-    UPDATE_PACKAGE "partexp" "sirpdboy/luci-app-partexp" "main"
-    UPDATE_PACKAGE "qbittorrent" "sbwml/luci-app-qbittorrent" "master" "" "qt6base qt6tools rblibtorrent"
     UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main"
-    UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "luci-app-timewol luci-app-wolplus"
-    UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
     
     # Step 5: 自动更新版本 (可选，针对 sing-box)
     # UPDATE_VERSION "sing-box"
