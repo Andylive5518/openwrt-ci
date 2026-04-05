@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2026 VIKINGYFY
 
-set -e
-
 LUCI_COLLECTIONS=$(find ./feeds/luci/collections/ -type f -name "Makefile" 2>/dev/null)
 if [ -n "$LUCI_COLLECTIONS" ]; then
     sed -i "/attendedsysupgrade/d" $LUCI_COLLECTIONS
