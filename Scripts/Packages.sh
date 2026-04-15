@@ -189,7 +189,7 @@ INSTALL_FROM_FEEDS() {
         lucky luci-app-lucky luci-app-openclash luci-app-homeproxy nikki luci-app-nikki \
         oaf open-app-filter luci-app-oaf \
         msd_lite luci-app-msd_lite cups luci-app-cupsd p910nd luci-app-p910nd \
-        luci-theme-argon luci-app-argon-config luci-theme-aurora \
+        luci-theme-argon luci-app-argon-config luci-theme-argone luci-app-argone-config luci-theme-aurora \
         luci-app-passwall luci-app-passwall2 luci-app-smartdns \
         luci-app-diskman luci-app-easytier luci-app-openlist2 \
         luci-app-partexp luci-app-qbittorrent luci-app-vnt

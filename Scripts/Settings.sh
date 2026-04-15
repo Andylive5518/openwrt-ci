@@ -5,7 +5,7 @@
 LUCI_COLLECTIONS=$(find ./feeds/luci/collections/ -type f -name "Makefile" 2>/dev/null)
 if [ -n "$LUCI_COLLECTIONS" ]; then
     sed -i "/attendedsysupgrade/d" $LUCI_COLLECTIONS
-    sed -i "s/luci-theme-bootstrap/luci-theme-${WRT_THEME:-bootstrap}/g" $LUCI_COLLECTIONS
+    sed -i "s/luci-theme-bootstrap/luci-theme-${WRT_THEME:-argon}/g" $LUCI_COLLECTIONS
 fi
 
 LUCI_SYSTEM=$(find ./feeds/luci/modules/luci-mod-system/ -type f -name "flash.js" 2>/dev/null)
@@ -38,10 +38,6 @@ fi
 
 echo "CONFIG_PACKAGE_luci=y" >> ./.config
 echo "CONFIG_LUCI_LANG_zh_Hans=y" >> ./.config
-if [ -n "$WRT_THEME" ]; then
-    echo "CONFIG_PACKAGE_luci-theme-$WRT_THEME=y" >> ./.config
-    echo "CONFIG_PACKAGE_luci-app-$WRT_THEME-config=y" >> ./.config
-fi
 
 if [ -n "$WRT_PACKAGE" ]; then
     printf "%s\n" "$WRT_PACKAGE" >> ./.config

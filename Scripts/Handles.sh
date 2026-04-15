@@ -46,6 +46,17 @@ if dir_exists "luci-theme-argon"; then
     cd "$PKG_PATH" && echo "theme-argon has been fixed!"
 fi
 
+#修改argone主题字体和颜色
+if dir_exists "luci-theme-argone"; then
+    echo " "
+
+    cd ./luci-theme-argone/
+
+    sed -i "s/primary '.*'/primary '#31a1a1'/; s/'0.2'/'0.5'/; s/'none'/'bing'/; s/'600'/'normal'/" ./luci-app-argone-config/root/etc/config/argone 2>/dev/null || true
+
+    cd "$PKG_PATH" && echo "theme-argone has been fixed!"
+fi
+
 #修改aurora菜单式样
 if dir_exists "luci-app-aurora-config"; then
     echo " "
