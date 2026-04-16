@@ -134,6 +134,15 @@ if [ -d "./package/cups" ]; then
     fi
 fi
 
+# 修复luci-app-store版本号问题 (移除r前缀以符合APK规范)
+LUCI_STORE_FILE=$(find . -path "*/luci-app-store/Makefile" -type f 2>/dev/null | head -1)
+if [ -n "$LUCI_STORE_FILE" ] && [ -f "$LUCI_STORE_FILE" ]; then
+    echo "Found luci-app-store at: $LUCI_STORE_FILE"
+    # APK不允许版本号中包含r前缀的revision，移除r前缀
+    sed -i 's/\(PKG_VERSION:=.*\)-r/\1./g' "$LUCI_STORE_FILE"
+    cd "$PKG_PATH" && echo "luci-app-store version has been fixed!"
+fi
+
 # 修复luci-app-dockerman版本号问题 (移除v前缀以符合APK规范)
 DOCKER_MAN_FILE=$(find . -path "*/luci-app-dockerman/Makefile" -type f 2>/dev/null | head -1)
 if [ -n "$DOCKER_MAN_FILE" ] && [ -f "$DOCKER_MAN_FILE" ]; then
