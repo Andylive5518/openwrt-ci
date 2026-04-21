@@ -190,7 +190,6 @@ INSTALL_FROM_FEEDS() {
         lucky luci-app-lucky luci-app-openclash luci-app-homeproxy nikki luci-app-nikki momo luci-app-momo\
         oaf open-app-filter luci-app-oaf msd_lite luci-app-msd_lite \
         luci-theme-argon luci-app-argon-config \
-        # luci-theme-argone luci-app-argone-config luci-theme-aurora \
         luci-app-passwall luci-app-passwall2 luci-app-smartdns smartdns \
         luci-app-diskman luci-app-samba4 luci-app-upnp luci-app-wolplus luci-app-easytier \
         luci-app-dockerman docker dockerd luci-app-wechatpush luci-app-autoreboot \
