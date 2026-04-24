@@ -202,6 +202,57 @@ INSTALL_SMALL8_FEEDS() {
     echo "  [完成] 从 small8 安装非代理插件"
 }
 
+# ============================================================================
+# 第四部分：同步 luci-lib-docker（dockerman 依赖）
+# ============================================================================
+
+SYNC_LUCI_LIB_DOCKER() {
+    local lib_path="./feeds/luci/libs/luci-lib-docker"
+    local repo_url="https://github.com/lisaac/luci-lib-docker.git"
+
+    echo ">>> 同步 luci-lib-docker..."
+
+    if [ -d "$lib_path" ]; then
+        echo "  [跳过] luci-lib-docker 已存在"
+        return 0
+    fi
+
+    mkdir -p "./feeds/luci/libs" || return
+
+    echo "  [克隆] $repo_url"
+    if ! git clone --filter=blob:none --no-checkout "$repo_url" "luci-lib-docker-tmp" 2>&1; then
+        echo "  [错误] luci-lib-docker 克隆失败" >&2
+        return 1
+    fi
+
+    cd "luci-lib-docker-tmp" || return 1
+    git sparse-checkout init --cone
+    git sparse-checkout set collections/luci-lib-docker 2>/dev/null || {
+        echo "  [警告] sparse-checkout set 失败，尝试直接 checkout"
+    }
+    git checkout --quiet 2>&1 || {
+        echo "  [警告] git checkout 失败"
+    }
+    cd ..
+    if [ -d "luci-lib-docker-tmp/collections/luci-lib-docker" ]; then
+        mv luci-lib-docker-tmp/collections/luci-lib-docker "$lib_path"
+    elif [ -d "luci-lib-docker-tmp" ]; then
+        # fallback: 直接移动整个目录
+        mv luci-lib-docker-tmp "$lib_path"
+    fi
+    rm -rf luci-lib-docker-tmp
+
+    if [ -d "$lib_path" ]; then
+        echo "  [完成] luci-lib-docker 同步成功"
+        # 刷新 feeds 索引，使新同步的 lib 被注册
+        echo "  [刷新] feeds index..."
+        ./scripts/feeds update -i 2>/dev/null || true
+    else
+        echo "  [错误] luci-lib-docker 同步失败" >&2
+        return 1
+    fi
+}
+
 INSTALL_PASSWALL_FEEDS() {
     echo ">>> 从 PassWall feeds 安装第三方包..."
 
@@ -276,6 +327,7 @@ main() {
     ADD_THIRD_PARTY_FEEDS          # 写入 feeds.conf.default
     ./scripts/feeds update -a      # 先 clone 所有 feeds
     REMOVE_CONFLICT_PACKAGES       # feeds clone 完之后再删冲突包
+    SYNC_LUCI_LIB_DOCKER           # 同步 dockerman 依赖的 luci-lib-docker
     INSTALL_PASSWALL_FEEDS             # 安装 PassWall feed 中的核心代理包
     REMOVE_PASSWALL_PACKAGES
     INSTALL_SMALL8_FEEDS              # 安装 small8 feed 中的包
@@ -306,6 +358,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 else
     export -f REMOVE_CONFLICT_PACKAGES
     export -f ADD_THIRD_PARTY_FEEDS
+    export -f SYNC_LUCI_LIB_DOCKER
     export -f INSTALL_PASSWALL_FEEDS
     export -f REMOVE_PASSWALL_PACKAGES
     export -f INSTALL_SMALL8_FEEDS

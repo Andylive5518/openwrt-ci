@@ -38,88 +38,69 @@ fi
 #修改argon主题字体和颜色
 if dir_exists "luci-theme-argon"; then
     echo " "
-
-    cd ./luci-theme-argon/
-
-    sed -i "s/primary '.*'/primary '#31a1a1'/; s/'0.2'/'0.5'/; s/'none'/'bing'/; s/'600'/'normal'/" ./luci-app-argon-config/root/etc/config/argon 2>/dev/null || true
-
-    cd "$PKG_PATH" && echo "theme-argon has been fixed!"
+    ARGON_CFG="$PKG_PATH/luci-theme-argon/luci-app-argon-config/root/etc/config/argon"
+    sed -i "s/primary '.*'/primary '#31a1a1'/; s/'0.2'/'0.5'/; s/'none'/'bing'/; s/'600'/'normal'/" "$ARGON_CFG" 2>/dev/null || true
+    echo "theme-argon has been fixed!"
 fi
 
 #修改argone主题字体和颜色
 if dir_exists "luci-theme-argone"; then
     echo " "
-
-    cd ./luci-theme-argone/
-
-    sed -i "s/primary '.*'/primary '#31a1a1'/; s/'0.2'/'0.5'/; s/'none'/'bing'/; s/'600'/'normal'/" ./luci-app-argone-config/root/etc/config/argone 2>/dev/null || true
-
-    cd "$PKG_PATH" && echo "theme-argone has been fixed!"
+    ARGONE_CFG="$PKG_PATH/luci-theme-argone/luci-app-argone-config/root/etc/config/argone"
+    sed -i "s/primary '.*'/primary '#31a1a1'/; s/'0.2'/'0.5'/; s/'none'/'bing'/; s/'600'/'normal'/" "$ARGONE_CFG" 2>/dev/null || true
+    echo "theme-argone has been fixed!"
 fi
 
 #修改aurora菜单式样
 if dir_exists "luci-app-aurora-config"; then
     echo " "
-
-    cd ./luci-app-aurora-config/
-
-    sed -i "s/nav_submenu_type '.*'/nav_submenu_type 'boxed-dropdown'/g" $(find ./root/ -type f -name "*aurora" 2>/dev/null) 2>/dev/null || true
-
-    cd "$PKG_PATH" && echo "theme-aurora has been fixed!"
+    AURORA_ROOT="$PKG_PATH/luci-app-aurora-config/root"
+    [ -d "$AURORA_ROOT" ] && find "$AURORA_ROOT" -type f -name "*aurora" -exec sed -i "s/nav_submenu_type '.*'/nav_submenu_type 'boxed-dropdown'/g" {} + 2>/dev/null || true
+    echo "theme-aurora has been fixed!"
 fi
 
 #修改qca-nss-drv启动顺序
 NSS_DRV="../feeds/nss_packages/qca-nss-drv/files/qca-nss-drv.init"
 if [ -f "$NSS_DRV" ]; then
     echo " "
-
     sed -i 's/START=.*/START=85/g' "$NSS_DRV"
-
-    cd "$PKG_PATH" && echo "qca-nss-drv has been fixed!"
+    echo "qca-nss-drv has been fixed!"
 fi
 
 #修改qca-nss-pbuf启动顺序
 NSS_PBUF="./kernel/mac80211/files/qca-nss-pbuf.init"
 if [ -f "$NSS_PBUF" ]; then
     echo " "
-
     sed -i 's/START=.*/START=86/g' "$NSS_PBUF"
-
-    cd "$PKG_PATH" && echo "qca-nss-pbuf has been fixed!"
+    echo "qca-nss-pbuf has been fixed!"
 fi
 
 #修复Rust编译失败
 RUST_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/rust/Makefile" 2>/dev/null)
 if [ -n "$RUST_FILE" ] && [ -f "$RUST_FILE" ]; then
     echo " "
-
     for rust_makefile in $RUST_FILE; do
         sed -i 's/ci-llvm=true/ci-llvm=false/g' "$rust_makefile"
     done
-
-    cd "$PKG_PATH" && echo "rust has been fixed!"
+    echo "rust has been fixed!"
 fi
 
 #修复DiskMan编译失败
 DM_FILE="./luci-app-diskman/applications/luci-app-diskman/Makefile"
 if [ -f "$DM_FILE" ]; then
     echo " "
-
     sed -i '/ntfs-3g-utils /d' "$DM_FILE"
-
-    cd "$PKG_PATH" && echo "diskman has been fixed!"
+    echo "diskman has been fixed!"
 fi
 
 #修复luci-app-netspeedtest相关问题
 if dir_exists "luci-app-netspeedtest"; then
     echo " "
-
-    cd ./luci-app-netspeedtest/
-
-    sed -i '$a\exit 0' ./netspeedtest/files/99_netspeedtest.defaults 2>/dev/null || true
-    sed -i 's/ca-certificates/ca-bundle/g' ./speedtest-cli/Makefile 2>/dev/null || true
-
-    cd "$PKG_PATH" && echo "netspeedtest has been fixed!"
+    NETSPEEDTEST_DEFAULTS="$PKG_PATH/luci-app-netspeedtest/netspeedtest/files/99_netspeedtest.defaults"
+    NETSPEEDTEST_SPD_MK="$PKG_PATH/luci-app-netspeedtest/speedtest-cli/Makefile"
+    [ -f "$NETSPEEDTEST_DEFAULTS" ] && sed -i '$a\exit 0' "$NETSPEEDTEST_DEFAULTS" 2>/dev/null || true
+    [ -f "$NETSPEEDTEST_SPD_MK" ] && sed -i 's/ca-certificates/ca-bundle/g' "$NETSPEEDTEST_SPD_MK" 2>/dev/null || true
+    echo "netspeedtest has been fixed!"
 fi
 
 # 修复cups编译失败 - 改用主源自 cups (small8 版本存在 PKG_MD5SUM + 已废弃的 configure 选项问题)
